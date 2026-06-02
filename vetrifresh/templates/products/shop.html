@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shop - VetriFresh{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">Home</a> &gt;
+            <a href="/products/">Categories</a>
+            {% if selected_category %}
+            &gt; <span>{{ selected_category.name }}</span>
+            {% endif %}
+        </nav>
+    </div>
+    <div class="breadcrumb-bg">
+        <img src="{% static 'images/breadcrumb-bg.jpg' %}" alt="" onerror="this.style.display='none'">
+    </div>
+</div>
+
+<!-- SHOP SECTION -->
+<section class="shop-section">
+    <div class="container">
+        <div class="shop-grid">
+
+            <!-- LEFT SIDEBAR -->
+            <aside class="shop-sidebar">
+
+                <!-- Categories -->
+                <div class="sidebar-widget">
+                    <div class="widget-header" onclick="toggleWidget(this)">
+                        <h3>All Categories</h3>
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <div class="widget-body">
+                        <label class="category-check">
+                            <input type="radio" name="category" value="" 
+                                {% if not selected_category %}checked{% endif %}
+                                onchange="filterCategory('')">
+                            <span>All Products</span>
+                            <small>({{ categories|length }})</small>
+                        </label>
+                        {% for cat in categories %}
+                        <label class="category-check">
+                            <input type="radio" name="category" value="{{ cat.slug }}"
+                            {% if selected_category and selected_category.slug == cat.slug %}checked{% endif %}
+                                onchange="filterCategory('{{ cat.slug }}')">
+                            <span>{{ cat.name }}</span>
+                            <small>({{ cat.products.count }})</small>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Price Filter -->
+                <div class="sidebar-widget">
+                    <div class="widget-header" onclick="toggleWidget(this)">
+                        <h3>Price</h3>
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <div class="widget-body">
+                        <div class="price-range">
+                            <input type="range" id="price-range" min="0" max="1500" value="{{ max_price }}"
+                                oninput="updatePrice(this.value)">
+                            <div class="price-display">Price: <span id="price-val">₹{{ min_price }} - ₹{{ max_price }}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="sidebar-widget">
+                    <div class="widget-header" onclick="toggleWidget(this)">
+                        <h3>Rating</h3>
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <div class="widget-body">
+                        {% for r in "54321" %}
+                        <label class="rating-check">
+                            <input type="checkbox" onchange="filterRating('{{ r }}')">
+                            <span class="stars">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter > r|add:0 %}empty{% endif %}"></i>
+                                {% endfor %}
+                            </span>
+                            <span>{{ r }}.0 & up</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Popular Tags -->
+                <div class="sidebar-widget">
+                    <div class="widget-header" onclick="toggleWidget(this)">
+                        <h3>Popular Tag</h3>
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <div class="widget-body">
+                        <div class="tags-grid">
+                            <span class="tag active" onclick="filterTag(this)">Healthy</span>
+                            <span class="tag" onclick="filterTag(this)">Low fat</span>
+                            <span class="tag" onclick="filterTag(this)">Vegetarian</span>
+                            <span class="tag" onclick="filterTag(this)">Kid foods</span>
+                            <span class="tag" onclick="filterTag(this)">Vitamins</span>
+                            <span class="tag" onclick="filterTag(this)">Bread</span>
+                            <span class="tag" onclick="filterTag(this)">Meat</span>
+                            <span class="tag" onclick="filterTag(this)">Snacks</span>
+                            <span class="tag" onclick="filterTag(this)">Tiffin</span>
+                            <span class="tag" onclick="filterTag(this)">Launch</span>
+                            <span class="tag" onclick="filterTag(this)">Dinner</span>
+                            <span class="tag" onclick="filterTag(this)">Breakfast</span>
+                            <span class="tag" onclick="filterTag(this)">Fruit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discount Banner -->
+                <div class="sidebar-discount">
+                    <h3>79% <span>Discount</span></h3>
+                    <p>on your first order</p>
+                    <a href="/products/" class="btn-shop-sm">Shop Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Sale Products -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Sale Products</h3>
+                    <div class="sale-products">
+                        {% for product in products %}
+                        {% if product.badge == 'sale' %}
+                        <div class="sale-product-item">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            <div>
+                                <span class="sale-name">{{ product.name }}</span>
+                                <span class="sale-price">₹{{ product.price }}/{{ product.unit }}</span>
+                                <span class="sale-original">₹{{ product.original_price }}</span>
+                                <div class="product-stars">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star {% if forloop.counter > product.rating %}empty{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- RIGHT PRODUCTS -->
+            <div class="shop-main">
+
+                <!-- Sort Bar -->
+                <div class="sort-bar">
+                    <span>{{ products.paginator.count }} Products found</span>
+                    <select onchange="sortProducts(this.value)" class="sort-select">
+                        <option value="latest" {% if sort == 'latest' %}selected{% endif %}>Latest</option>
+                        <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Top Rated</option>
+                    </select>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="shop-products-grid">
+                    {% for product in products %}
+                    <div class="shop-product-card">
+                        {% if product.stock == 0 %}
+                        <div class="out-of-stock-badge">Out of Stock</div>
+                        {% endif %}
+                        {% if product.badge != 'none' %}
+                        <span class="product-badge badge-{{ product.badge }}">
+                            {% if product.badge == 'sale' %}Sale{% elif product.badge == 'new' %}New{% elif product.badge == 'hot' %}Hot{% endif %}
+                        </span>
+                        {% endif %}
+
+                        <!-- Product Image -->
+                        <div class="shop-product-img">
+                            <a href="/products/{{ product.slug }}/">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            </a>
+                            {% if product.rating %}
+                            <div class="product-rating-badge">
+                                <i class="fas fa-star"></i> {{ product.rating }}
+                            </div>
+                            {% endif %}
+
+                            <!-- Hover Overlay -->
+                            <div class="product-hover-overlay">
+                                <button class="hover-wishlist"><i class="fas fa-heart"></i></button>
+                                <button class="hover-view" onclick="window.location='/products/{{ product.slug }}/'"><i class="fas fa-eye"></i></button>
+                                <div class="hover-desc">"{{ product.description|truncatechars:50 }}"</div>
+                                <button class="hover-cart-btn" onclick="addToCartShop({{ product.id }})">
+                                    View Cart <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="shop-product-info">
+                            <a href="/products/{{ product.slug }}/" class="shop-product-name">{{ product.name }}</a>
+                            <div class="product-price-row">
+                                <div>
+                                    <span class="product-price">₹{{ product.price }}/{{ product.unit }}</span>
+                                    {% if product.original_price %}
+                                    <span class="product-original">₹{{ product.original_price }}</span>
+                                    {% endif %}
+                                </div>
+                               <button class="btn-add-cart"
+    onclick="window.location='/products/{{ product.slug }}/'"
+    {% if product.stock == 0 %}disabled{% endif %}>
+    <i class="fas fa-shopping-bag"></i>
+</button>
+                            </div>
+                            <div class="product-stars">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter > product.rating %}empty{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="no-products">
+                        <i class="fas fa-box-open"></i>
+                        <p>No products found!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- PAGINATION -->
+                {% if products.has_other_pages %}
+                <div class="pagination-wrapper">
+                    <div class="pagination">
+                        {% if products.has_previous %}
+                        <a href="?page={{ products.previous_page_number }}&sort={{ sort }}" class="page-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+
+                        {% for num in products.paginator.page_range %}
+                        {% if products.number == num %}
+                        <span class="page-btn active">{{ num }}</span>
+                        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                        <a href="?page={{ num }}&sort={{ sort }}" class="page-btn">{{ num }}</a>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}&sort={{ sort }}" class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer-overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+        <h3>Shopping Cart <span id="cart-drawer-count">(0)</span></h3>
+        <button onclick="closeCartDrawer()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-drawer-items" id="cartDrawerItems">
+        <!-- Items loaded dynamically -->
+    </div>
+    <div class="cart-drawer-footer">
+        <a href="/orders/cart/" class="btn-checkout">Proceed to Checkout</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Filter by category
+function filterCategory(slug) {
+    var url = '/products/';
+    if (slug) url += '?category=' + slug;
+    window.location.href = url;
+}
+
+// Sort products
+function sortProducts(val) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('sort', val);
+    window.location.href = url.toString();
+}
+
+// Filter by rating
+function filterRating(r) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('rating', r);
+    window.location.href = url.toString();
+}
+
+// Price range
+function updatePrice(val) {
+    document.getElementById('price-val').textContent = '₹0 - ₹' + val;
+}
+
+// Tag filter
+function filterTag(el) {
+    document.querySelectorAll('.tag').forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+}
+
+// Toggle sidebar widget
+function toggleWidget(header) {
+    var body = header.nextElementSibling;
+    var icon = header.querySelector('i');
+    body.classList.toggle('collapsed');
+    icon.classList.toggle('fa-chevron-up');
+    icon.classList.toggle('fa-chevron-down');
+}
+
+// Add to cart
+function addToCartShop(productId) {
+    fetch('/products/add-to-cart/' + productId + '/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            document.querySelectorAll('.cart-badge').forEach(function(el) {
+                el.textContent = data.cart_count;
+            });
+            showToast(data.message);
+            openCartDrawer();
+        }
+    });
+}
+
+// Cart drawer
+function openCartDrawer() {
+    fetch('/products/get-cart/')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        var html = '';
+        var count = 0;
+        data.items.forEach(function(item) {
+            count += item.quantity;
+            html += '<div class="cart-drawer-item">' +
+                '<img src="' + item.image + '" alt="' + item.name + '">' +
+                '<div class="cart-item-info">' +
+                '<span class="cart-item-name">' + item.name + '</span>' +
+                '<span class="cart-item-price">' + item.quantity + ' kg x <strong>₹' + item.price + '</strong></span>' +
+                '</div>' +
+                '<button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')"><i class="fas fa-times"></i></button>' +
+                '</div>';
+        });
+        if (!html) html = '<p class="cart-empty">Cart is empty!</p>';
+        document.getElementById('cartDrawerItems').innerHTML = html;
+        document.getElementById('cart-drawer-count').textContent = '(' + count + ')';
+        document.getElementById('cartDrawer').classList.add('open');
+        document.getElementById('cartOverlay').classList.add('open');
+    });
+}
+
+function closeCartDrawer() {
+    document.getElementById('cartDrawer').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+}
+
+function removeFromCart(productId) {
+    fetch('/products/remove-from-cart/' + productId + '/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            document.querySelectorAll('.cart-badge').forEach(function(el) {
+                el.textContent = data.cart_count;
+            });
+            openCartDrawer();
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showToast(message) {
+    var toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.classList.add('show'); }, 100);
+    setTimeout(function() {
+        toast.classList.remove('show');
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 2500);
+}
+</script>
+{% endblock %}

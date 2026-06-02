@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - VetriFresh{% endblock %}
+
+{% block content %}
+<div class="blog-page">
+    <div class="blog-layout">
+
+        <aside class="blog-sidebar">
+            <form class="sidebar-widget" method="get">
+                <div class="widget-header">
+                    <h3>Filter</h3>
+                    <span class="filter-icon"><i class="fas fa-sliders-h"></i></span>
+                </div>
+
+                <div class="widget-select">
+                    <label for="category">All Categories</label>
+                    <select id="category" name="category" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                            {{ cat }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="widget-select">
+                    <label for="price">Price</label>
+                    <select id="price" name="price" onchange="this.form.submit()">
+                        <option value="">Select Price</option>
+                        <option value="low" {% if selected_price == 'low' %}selected{% endif %}>Low to High</option>
+                        <option value="high" {% if selected_price == 'high' %}selected{% endif %}>High to Low</option>
+                    </select>
+                </div>
+
+                {% if selected_tag %}
+                <input type="hidden" name="tag" value="{{ selected_tag }}">
+                {% endif %}
+                {% if request.GET.sort %}
+                <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+                {% endif %}
+            </form>
+
+            <div class="sidebar-widget">
+                <h4>Popular Tag</h4>
+                <div class="tag-list">
+                    {% for tag in tags %}
+                    <a href="?tag={{ tag }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_price %}&price={{ selected_price }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                       class="tag-pill {% if selected_tag == tag %}active{% endif %}">
+                        {{ tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar-widget discount-box">
+                <p class="discount-title">79% <span>Discount</span></p>
+                <p class="discount-sub">on your first order</p>
+                <a href="/products/" class="shop-now-link">Shop Now →</a>
+            </div>
+
+            <div class="sidebar-widget">
+                <h4>Sale Products</h4>
+                <div class="side-product-list">
+                    {% for post in sale_posts %}
+                    <a href="#" class="side-product-item">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        <div>
+                            <p>{{ post.title|truncatechars:28 }}</p>
+                            <span>{{ post.author }}</span>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <a href="#" class="side-product-item">
+                        <img src="{% static 'images/a1 (1).png' %}" alt="Fresh vegetables">
+                        <div>
+                            <p>Fresh organic vegetables combo pack</p>
+                            <span>Admin</span>
+                        </div>
+                    </a>
+                    <a href="#" class="side-product-item">
+                        <img src="{% static 'images/a1 (2).png' %}" alt="Seasonal fruits">
+                        <div>
+                            <p>Seasonal fruits special offer</p>
+                            <span>Admin</span>
+                        </div>
+                    </a>
+                    <a href="#" class="side-product-item">
+                        <img src="{% static 'images/a1 (3).png' %}" alt="Healthy groceries">
+                        <div>
+                            <p>Healthy groceries for family meals</p>
+                            <span>Admin</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <h4>Recently Added</h4>
+                <div class="recent-list">
+                    {% for post in recent_posts %}
+                    <a href="#" class="recent-item">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        <div>
+                            <p>{{ post.title|truncatechars:30 }}</p>
+                            <span>{{ post.published_at|date:"M d, Y" }}</span>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <a href="#" class="recent-item">
+                        <img src="{% static 'images/a1 (4).png' %}" alt="Recent post 1">
+                        <div>
+                            <p>Fresh produce shopping tips for beginners</p>
+                            <span>Aug 04, 2026</span>
+                        </div>
+                    </a>
+                    <a href="#" class="recent-item">
+                        <img src="{% static 'images/a1 (5).png' %}" alt="Recent post 2">
+                        <div>
+                            <p>Organic food ideas for quick healthy meals</p>
+                            <span>Jul 29, 2026</span>
+                        </div>
+                    </a>
+                    <a href="#" class="recent-item">
+                        <img src="{% static 'images/a1 (6).png' %}" alt="Recent post 3">
+                        <div>
+                            <p>Easy ways to store groceries longer</p>
+                            <span>Jul 20, 2026</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <h4>Our Gallery</h4>
+                <div class="gallery-grid">
+                    {% for post in gallery_posts %}
+                    <a href="#">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    </a>
+                    {% empty %}
+                    <a href="#"><img src="{% static 'images/a1 (1).png' %}" alt="Gallery 1"></a>
+                    <a href="#"><img src="{% static 'images/a1 (2).png' %}" alt="Gallery 2"></a>
+                    <a href="#"><img src="{% static 'images/a1 (3).png' %}" alt="Gallery 3"></a>
+                    <a href="#"><img src="{% static 'images/a1 (4).png' %}" alt="Gallery 4"></a>
+                    <a href="#"><img src="{% static 'images/a1 (5).png' %}" alt="Gallery 5"></a>
+                    <a href="#"><img src="{% static 'images/a1 (6).png' %}" alt="Gallery 6"></a>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <section class="blog-main">
+            <div class="blog-toolbar">
+                <form method="get" class="sort-form">
+                    {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    {% if selected_price %}
+                    <input type="hidden" name="price" value="{{ selected_price }}">
+                    {% endif %}
+                    {% if selected_tag %}
+                    <input type="hidden" name="tag" value="{{ selected_tag }}">
+                    {% endif %}
+
+                    <label for="sort">Sort by:</label>
+                    <select id="sort" name="sort" onchange="this.form.submit()">
+                        <option value="latest" {% if request.GET.sort == 'latest' or not request.GET.sort %}selected{% endif %}>Latest</option>
+                        <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                        <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title</option>
+                    </select>
+                </form>
+
+                <p class="results-count">
+                    {% if posts %}
+                        {{ posts|length }} Results Found
+                    {% else %}
+                        0 Results Found
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="blog-grid">
+    <!-- Post 1 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (29).png' %}" alt="Fresh vegetables">
+            <div class="date-badge">25<small>Aug</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Fresh organic vegetables help build a healthy daily routine</h3>
+        <p class="blog-excerpt">Discover how fresh and organic vegetables can improve your daily meals.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 2 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (26).png' %}" alt="Organic fruits">
+            <div class="date-badge">18<small>Aug</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Simple grocery planning ideas to save time and eat better</h3>
+        <p class="blog-excerpt">Use a simple grocery routine to plan smarter and reduce waste.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 3 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (4).png' %}" alt="Dairy products">
+            <div class="date-badge">10<small>Aug</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Why seasonal fruits are better for taste and health</h3>
+        <p class="blog-excerpt">Seasonal fruits often taste better and bring more freshness to your meals.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 4 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (5).png' %}" alt="Bakery items">
+            <div class="date-badge">04<small>Aug</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Tips to choose the best bakery items while shopping</h3>
+        <p class="blog-excerpt">Learn what to check before buying bakery goods for quality taste.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 5 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (30).png' %}" alt="Spices and groceries">
+            <div class="date-badge">29<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Essential spice combinations for quick healthy meals</h3>
+        <p class="blog-excerpt">Build fast and colorful flavor profiles with easy spice combinations.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 6 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (31).png' %}" alt="Leafy greens">
+            <div class="date-badge">20<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Benefits of ordering leafy greens online for families</h3>
+        <p class="blog-excerpt">Ordering online can save time and keep your family health goals on track.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 7 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (6).png' %}" alt="Fresh juice ideas">
+            <div class="date-badge">15<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Refreshing fruit juice ideas for a summer energy boost</h3>
+        <p class="blog-excerpt">Stay hydrated and energized with these simple homemade fresh fruit juices.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 8 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (32).png' %}" alt="Protein groceries">
+            <div class="date-badge">10<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Adding protein-rich groceries to your weekly menu</h3>
+        <p class="blog-excerpt">Discover easy ways to incorporate more protein into your daily grocery list.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 9 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (33).png' %}" alt="Local market produce">
+            <div class="date-badge">05<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Supporting your local market for fresh ingredients</h3>
+        <p class="blog-excerpt">Why local produce is a win-win for your taste buds and the local community.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+
+    <!-- Post 10 -->
+    <article class="blog-card">
+        <a href="#" class="blog-image-wrap">
+            <img src="{% static 'images/a1 (34).png' %}" alt="Healthy breakfast items">
+            <div class="date-badge">01<small>Jul</small></div>
+        </a>
+        <div class="blog-meta"><span><i class="fa-regular fa-user"></i> By Admin</span></div>
+        <h3 class="blog-title">Start your day right with these healthy breakfast picks</h3>
+        <p class="blog-excerpt">Quick breakfast ideas using healthy groceries to kickstart your morning routine.</p>
+        <a href="#" class="read-more">Read More</a>
+    </article>
+</div>
+        </section>
+
+    </div>
+</div>
+{% endblock %}

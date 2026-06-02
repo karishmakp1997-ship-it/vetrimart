@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="cart-page">
+
+    <h2 class="cart-title">My Shopping Cart</h2>
+
+    <div class="cart-wrapper">
+
+        <!-- LEFT -->
+        <div class="cart-left">
+
+            <div class="cart-header">
+                <span>PRODUCT</span>
+                <span>PRICE</span>
+                <span>QUANTITY</span>
+                <span>SUBTOTAL</span>
+            </div>
+
+            {% for item in items %}
+            <div class="cart-item">
+
+                <div class="cart-product">
+                    <img src="{{ item.product.image.url }}">
+                    <span>{{ item.product.name }}</span>
+                </div>
+
+                <div class="cart-price">
+                    ₹{{ item.product.price }}/kg
+                </div>
+
+                <div class="cart-qty">
+                    <a href="{% url 'update_quantity' item.product.id 'dec' %}">-</a>
+                    <span>{{ item.quantity }}</span>
+                    <a href="{% url 'update_quantity' item.product.id 'inc' %}">+</a>
+                </div>
+
+                <div class="cart-subtotal">
+                    ₹{{ item.subtotal }}
+                </div>
+
+                <div class="cart-remove">
+                    <a href="{% url 'remove_from_cart' item.product.id %}">×</a>
+                </div>
+
+            </div>
+            {% endfor %}
+
+            <div class="cart-actions">
+                <a href="/products/" class="btn-light">Return to shop</a>
+                <button class="btn-light">Update Cart</button>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="cart-right">
+
+            <h3>Cart Total</h3>
+
+            <div class="cart-summary">
+                <div>
+                    <span>Subtotal:</span>
+                    <span>₹{{ subtotal }}</span>
+                </div>
+
+                <div>
+                    <span>Shipping:</span>
+                    <span>Free</span>
+                </div>
+
+                <div class="total">
+                    <span>Total:</span>
+                    <span>₹{{ total }}</span>
+                </div>
+            </div>
+
+<a href="{% url 'billing_info' %}" class="checkout-btn">Proceed to checkout</a>
+        </div>
+
+    </div>
+
+    <!-- COUPON -->
+    <div class="coupon-box">
+        <span>Coupon Code</span>
+        <input type="text" placeholder="Enter code">
+        <button>Apply Coupon</button>
+    </div>
+
+</div>
+
+{% endblock %}

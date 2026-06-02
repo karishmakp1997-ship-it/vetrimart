@@ -1,0 +1,821 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VetriFresh{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1002">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}?v=1">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <div class="location-search">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" id="pincode-input" placeholder="Share Your Location" maxlength="6">
+                    <span id="pincode-status"></span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <span><i class="fas fa-phone"></i> +91 93738 34940</span>
+                <select class="lang-select">
+                    <option>Eng</option>
+                    <option>Tamil</option>
+                </select>
+                <select class="currency-select">
+                    <option>INR</option>
+                    <option>USD</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-text">Vetri<span class="logo-fresh">Fresh</span></span>
+                <small>PURE • ORGANIC • FRESH</small>
+            </a>
+
+           <ul class="nav-links">
+
+    <li><a href="{% url 'home' %}">Home</a></li>
+
+    <li class="dropdown">
+        <a href="/products/">Shop <i class="fas fa-chevron-down"></i></a>
+        <div class="dropdown-menu">
+            {% for cat in nav_categories %}
+            <a href="/products/?category={{ cat.slug }}">{{ cat.name }}</a>
+            {% empty %}
+            <a href="/products/">Vegetables</a>
+            <a href="/products/">Fresh Fruit</a>
+            <a href="/products/">Snacks</a>
+            <a href="/products/">Cooking</a>
+            <a href="/products/">Beverages</a>
+            <a href="/products/">Beauty & Health</a>
+            <a href="/products/">Bread & Bakery</a>
+            {% endfor %}
+        </div>
+    </li>
+
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="/about/">About Us</a></li>
+    <li><a href="/contact/">Contact Us</a></li>
+</ul>
+            <div class="nav-icons">
+                <a href="#" class="nav-icon" id="search-toggle"><i class="fas fa-search"></i></a>
+                <a href="/wishlist/" class="nav-icon"><i class="fas fa-heart"></i></a>
+                <a href="/orders/cart/" class="nav-icon cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge">{{ cart_count }}</span>
+                </a>
+                <a href="/accounts/login/" class="nav-icon"><i class="fas fa-user"></i></a>
+            </div>
+        </div>
+        
+
+        <!-- Search Bar -->
+        <div class="search-bar" id="search-bar">
+            <div class="container">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- NEWSLETTER + FOOTER -->
+    <div class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-inner">
+                <div class="newsletter-logo">
+                    <span class="logo-text">Vetri<span class="logo-fresh">Fresh</span></span>
+                </div>
+                <div class="newsletter-text">
+                    <h3>Subscribe our Newsletter</h3>
+                    <p>Get the latest updates by subscribing</p>
+                </div>
+                <div class="newsletter-form">
+                    <input type="email" id="newsletter-email" placeholder="Your email address">
+                    <button onclick="subscribeNewsletter()">Subscribe</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>About Vetri Fresh</h4>
+                    <p>Pure, organic and fresh groceries delivered to your doorstep in Tirunelveli.</p>
+                    <div class="footer-contact">
+                        <span>7836389098</span> or <span>vetrifresh@gmail.com</span>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>My Account</h4>
+                    <ul>
+                        <li><a href="/accounts/profile/">My Account</a></li>
+                        <li><a href="/orders/history/">Order History</a></li>
+                        <li><a href="/orders/cart/">Shopping Cart</a></li>
+                        <li><a href="/wishlist/">Wishlist</a></li>
+                        <li><a href="/accounts/settings/">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Helps</h4>
+                    <ul>
+                        <li><a href="/contact/">Contact</a></li>
+                        <li><a href="/faqs/">FAQs</a></li>
+                        <li><a href="/terms/">Terms & Condition</a></li>
+                        <li><a href="/privacy/">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Proxy</h4>
+                    <ul>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/products/">Shop</a></li>
+                        <li><a href="/products/">Product</a></li>
+                        <li><a href="/orders/track/">Track Order</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Instagram</h4>
+                    <div class="footer-instagram">
+                        {% for photo in instagram_photos %}
+                        <a href="{{ photo.link }}" target="_blank">
+                            <img src="{{ photo.image.url }}" alt="Instagram">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p>VetriFresh eCommerce 2024. All Rights Reserved</p>
+                <div class="payment-icons">
+                    <img src="{% static 'images/applepay.png' %}" alt="Apple Pay" onerror="this.style.display='none'">
+                    <img src="{% static 'images/visa.png' %}" alt="Visa" onerror="this.style.display='none'">
+                    <span class="payment-text">🔒 Secure Payment</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Pincode validation
+        document.getElementById('pincode-input').addEventListener('input', function () {
+            const pincode = this.value;
+            const status = document.getElementById('pincode-status');
+            if (pincode.length === 6) {
+                fetch(`/check-pincode/?pincode=${pincode}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.available) {
+                            status.innerHTML = `<span class="pin-ok">✓ Delivery available - ${data.area}</span>`;
+                        } else {
+                            status.innerHTML = `<span class="pin-no">✗ Delivery not available</span>`;
+                        }
+                    });
+            } else {
+                status.innerHTML = '';
+            }
+        });
+
+        // Search toggle
+        document.getElementById('search-toggle').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('search-bar').classList.toggle('active');
+        });
+
+        // Newsletter subscribe
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletter-email').value;
+            if (!email) return;
+            fetch('/newsletter/subscribe/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify({ email: email })
+            }).then(r => r.json()).then(data => {
+                alert('Subscribed successfully!');
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+    <!-- CHATBOT -->
+    {% block chatbot %}
+    {% if not hide_chatbot %}
+    <div class="chatbot-wrapper">
+        <!-- Toggle Button -->
+        <div class="chatbot-toggle" id="chatbotToggle" onclick="toggleChatbot()">
+            <div class="chatbot-avatar-btn">
+                <img src="{% static 'images/chatbot.png' %}" alt="Chat" onerror="this.style.display='none'">
+                <div class="chatbot-robot-icon">🤖</div>
+            </div>
+            <div class="chatbot-hello-bubble">Hello!</div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chatbot-window" id="chatbotWindow">
+            <!-- Header -->
+            <div class="chatbot-header">
+                <div class="chatbot-header-left">
+                    <div class="chatbot-header-avatar">🤖</div>
+                    <div>
+                        <h4>VetriFresh Bot</h4>
+                        <span class="chatbot-status">● Online</span>
+                    </div>
+                </div>
+                <button onclick="toggleChatbot()" class="chatbot-close">✕</button>
+            </div>
+
+            <!-- Messages -->
+            <div class="chatbot-messages" id="chatbotMessages">
+                <!-- Auto loaded -->
+            </div>
+
+            <!-- Input -->
+            <div class="chatbot-input-area">
+                <label class="chatbot-attach"><i class="fas fa-paperclip"></i><input type="file" hidden></label>
+                <input type="text" id="chatbotInput" placeholder="Enter your message"
+                    onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" class="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ===== CHATBOT ===== */
+        .chatbot-wrapper {
+            position: fixed;
+            bottom: 500px;
+            right: 80px;
+            z-index: 9999;
+        }
+
+        .chatbot-toggle {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .chatbot-avatar-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+            transition: transform 0.3s;
+            font-size: 28px;
+            animation: wave 2s infinite;
+        }
+
+        .chatbot-avatar-btn img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .chatbot-robot-icon {
+            font-size: 28px;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .chatbot-hello-bubble {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            margin-bottom: 8px;
+            color: var(--green-dark);
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Chat Window */
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 360px;
+            height: 520px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .chatbot-window.open {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background: var(--green-light);
+            padding: 15px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .chatbot-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chatbot-header-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .chatbot-header h4 {
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .chatbot-status {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .chatbot-close:hover {
+            opacity: 1;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f9f9f9;
+        }
+
+        /* Message bubbles */
+        .chat-msg {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .chat-msg.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--green-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .chat-msg.bot .chat-bubble {
+            background: #e8f5e9;
+            color: var(--text-dark);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-msg.user .chat-bubble {
+            background: var(--green-dark);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-time {
+            font-size: 10px;
+            color: var(--text-gray);
+            margin-top: 3px;
+            text-align: right;
+        }
+
+        .chat-msg.bot .chat-time {
+            text-align: left;
+        }
+
+        /* Quick replies */
+        .quick-replies {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .quick-reply-btn {
+            background: white;
+            border: 1px solid var(--green-light);
+            color: var(--green-dark);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--green-light);
+            color: white;
+        }
+
+        /* Image grid in chat */
+        .chat-image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .chat-image-grid img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Banner in chat */
+        .chat-banner {
+            background: #f5f0e8;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .chat-banner img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .chat-banner-content {
+            padding: 10px;
+        }
+
+        .chat-banner-content small {
+            font-size: 10px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+        }
+
+        .chat-banner-content h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin: 3px 0;
+        }
+
+        .chat-banner-content p {
+            font-size: 11px;
+            color: var(--orange);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .chat-banner-content a {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            color: var(--green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--green-light);
+        }
+
+        /* Input area */
+        .chatbot-input-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 15px;
+            border-top: 1px solid var(--border);
+            background: white;
+        }
+
+        .chatbot-attach {
+            color: var(--text-gray);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .chatbot-attach:hover {
+            color: var(--green-light);
+        }
+
+        #chatbotInput {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-family: var(--font);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chatbot-send {
+            width: 36px;
+            height: 36px;
+            background: var(--green-light);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .chatbot-send:hover {
+            background: var(--green-dark);
+        }
+    </style>
+
+    <script>
+        var chatbotOpen = false;
+        var chatbotStarted = false;
+
+        function toggleChatbot() {
+            chatbotOpen = !chatbotOpen;
+            var win = document.getElementById('chatbotWindow');
+            if (chatbotOpen) {
+                win.classList.add('open');
+                if (!chatbotStarted) {
+                    chatbotStarted = true;
+                    startChat();
+                }
+            } else {
+                win.classList.remove('open');
+            }
+        }
+
+        function startChat() {
+            setTimeout(function () {
+                addBotMessage('Hi, how can I help you? 😊', true);
+            }, 500);
+        }
+
+        function addBotMessage(text, showQuickReplies) {
+            var msgs = document.getElementById('chatbotMessages');
+            var time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            var div = document.createElement('div');
+            div.className = 'chat-msg bot';
+            div.innerHTML = '<div class="chat-msg-avatar">🤖</div>' +
+                '<div>' +
+                '<div class="chat-bubble">' + text + '</div>' +
+                '<div class="chat-time">Chatbot ' + time + '</div>' +
+                (showQuickReplies ? getQuickReplies() : '') +
+                '</div>';
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function getQuickReplies() {
+            return '<div class="quick-replies">' +
+                '<button class="quick-reply-btn" onclick="handleQuickReply(\'order\')">Issue with my Order</button>' +
+                '<button class="quick-reply-btn" onclick="handleQuickReply(\'cancel\')">Issue with cancellation fee</button>' +
+                '<button class="quick-reply-btn" onclick="handleQuickReply(\'sale\')">Latest Sale offers</button>' +
+                '<button class="quick-reply-btn" onclick="handleQuickReply(\'something\')">Something else</button>' +
+                '</div>';
+        }
+
+        function addUserMessage(text) {
+            var msgs = document.getElementById('chatbotMessages');
+            var time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            var div = document.createElement('div');
+            div.className = 'chat-msg user';
+            div.innerHTML = '<div class="chat-msg-avatar" style="background:#1a3c1a;">👤</div>' +
+                '<div>' +
+                '<div class="chat-bubble">' + text + '</div>' +
+                '<div class="chat-time">' + time + ' PM</div>' +
+                '</div>';
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function handleQuickReply(type) {
+            var responses = {
+                'order': {
+                    user: 'Issue with my Order',
+                    bot: 'I understand you have an issue with your order. Please share your order ID and we will resolve it within 24 hours! 📦'
+                },
+                'cancel': {
+                    user: 'Issue with cancellation fee',
+                    bot: 'Cancellation fees apply only after the order is shipped. For orders cancelled before shipping, full refund is provided! 💰'
+                },
+                'sale': {
+                    user: 'Latest Sale offers',
+                    bot: 'Here are the latest Sale offers 🎉'
+                },
+                'something': {
+                    user: 'Something else',
+                    bot: 'Sure! Please type your question below and I will help you! 😊'
+                }
+            };
+
+            var res = responses[type];
+            if (res) {
+                addUserMessage(res.user);
+                setTimeout(function () {
+                    addBotMessage(res.bot, false);
+                    if (type === 'sale') {
+                        setTimeout(function () { addSaleBanner(); }, 500);
+                    }
+                }, 800);
+            }
+        }
+
+        function addSaleBanner() {
+            var msgs = document.getElementById('chatbotMessages');
+            var div = document.createElement('div');
+            div.className = 'chat-msg bot';
+            div.innerHTML = '<div class="chat-msg-avatar">🤖</div>' +
+                '<div>' +
+                '<div class="chat-banner">' +
+                '<div class="chat-banner-content">' +
+                '<small>SUMMER SALE</small>' +
+                '<h4>75% OFF</h4>' +
+                '<p>Only Fruit & Vegetable</p>' +
+                '<a href="/products/">Shop Now →</a>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        // FAQ responses
+        var faqs = {
+            'delivery': 'We deliver within Tirunelveli district! Delivery takes 1-2 hours for same-day orders. 🚚',
+            'pincode': 'We currently serve these pincodes: 627001, 627002, 627003, 627004, 627005, 627006, 627007',
+            'return': 'We have a 30-day money-back guarantee! Contact us within 30 days for returns. 💚',
+            'payment': 'We accept UPI, Credit/Debit cards, Net Banking and Cash on Delivery! 💳',
+            'organic': 'Yes! All our products are 100% organic and fresh, sourced directly from local farms! 🌿',
+            'price': 'Check our shop for the latest prices. We offer the best prices with daily deals! 🏷️',
+            'contact': 'You can reach us at +91 93738 34940 or vetrifresh@gmail.com 📞',
+            'hours': 'We are open 24/7 online! Flash sale from 9 AM - 10 AM daily! ⏰'
+        };
+
+        function sendMessage() {
+            var input = document.getElementById('chatbotInput');
+            var text = input.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            input.value = '';
+
+            setTimeout(function () {
+                var lower = text.toLowerCase();
+                var response = '';
+
+                if (lower.includes('deliver') || lower.includes('shipping')) response = faqs.delivery;
+                else if (lower.includes('pincode') || lower.includes('area') || lower.includes('location')) response = faqs.pincode;
+                else if (lower.includes('return') || lower.includes('refund') || lower.includes('money back')) response = faqs.return;
+                else if (lower.includes('payment') || lower.includes('pay') || lower.includes('upi')) response = faqs.payment;
+                else if (lower.includes('organic') || lower.includes('fresh') || lower.includes('natural')) response = faqs.organic;
+                else if (lower.includes('price') || lower.includes('cost') || lower.includes('how much')) response = faqs.price;
+                else if (lower.includes('contact') || lower.includes('phone') || lower.includes('email')) response = faqs.contact;
+                else if (lower.includes('hour') || lower.includes('time') || lower.includes('open')) response = faqs.hours;
+                else if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey')) response = 'Hello! 👋 How can I help you today?';
+                else if (lower.includes('thank')) response = 'You are welcome! 😊 Is there anything else I can help you with?';
+                else response = 'I am not sure about that. Please contact us at +91 93738 34940 or try asking about: delivery, payment, returns, organic products, or our store hours! 😊';
+
+                addBotMessage(response, false);
+            }, 800);
+        }
+    </script>
+    {% endif %}
+    {% endblock chatbot %}
+
+
+    {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="flash-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+
+</body>
+
+</html>

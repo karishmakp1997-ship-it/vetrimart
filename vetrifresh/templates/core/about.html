@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About | VetriFresh{% endblock %}
+
+{% block content %}
+<section class="about-page">
+  <div class="about-hero">
+    <div class="about-hero-inner">
+      <!-- LEFT TEXT -->
+      <div class="about-hero-text">
+        <p class="section-tag">About Us</p>
+        <h2>100% Trusted Organic Food Store</h2>
+        <p class="about-hero-desc">
+          Vetri Fresh is a trusted organic food store delivering fresh, high-quality groceries
+          straight from farm to home. We focus on quality, freshness, and convenience, making
+          healthy living simple and accessible for everyone.
+        </p>
+      </div>
+
+      <!-- RIGHT IMAGE -->
+      <div class="about-hero-image">
+        <img src="{% static 'images/a1 (27).png' %}" alt="Farmer with fresh organic vegetables">
+      </div>
+    </div>
+  </div>
+
+  <!-- SECOND SECTION -->
+  <div class="about-feature-section">
+    <div class="about-feature-inner">
+      <!-- LEFT BIG IMAGE -->
+      <div class="about-feature-image">
+         <img src="{% static 'images/a1 (50).png' %}" alt="Farmer in organic field">
+      </div>
+
+      <!-- RIGHT CARD -->
+      <div class="about-feature-card">
+        <h2>100% Trusted Organic Food Store</h2>
+        <p class="feature-desc">
+          Pellentesque a ante vulputate leo porttitor luctus sed eget eros. Nulla et rhoncus neque.
+          Duis non diam eget est luctus tincidunt a a mi. Nulla eu eros consequat tortor tincidunt feugiat.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-solid fa-leaf"></i></span>
+            <div>
+              <h4>100% Organic food</h4>
+              <p>100% healthy & fresh food.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-regular fa-headset"></i></span>
+            <div>
+              <h4>Great Support 24/7</h4>
+              <p>Instant access to Contact.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-regular fa-smile"></i></span>
+            <div>
+              <h4>Customer Feedback</h4>
+              <p>Our happy customer.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-solid fa-shield-halved"></i></span>
+            <div>
+              <h4>100% Secure Payment</h4>
+              <p>We ensure your money is save.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-solid fa-truck-fast"></i></span>
+            <div>
+              <h4>Free Shipping</h4>
+              <p>Free shipping with discount.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon"><i class="fa-solid fa-apple-whole"></i></span>
+            <div>
+              <h4>100% Organic Food</h4>
+              <p>100% healthy & fresh food.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="about-delivery">
+    <div class="container about-delivery-inner">
+        <div class="about-delivery-text">
+            <h2>We deliver, you enjoy your order</h2>
+            <p>
+                Fresh, locally sourced vegetables delivered right to your doorstep.
+                Sit back, relax, and let VetriFresh handle the rest.
+            </p>
+            <ul class="about-delivery-list">
+                <li>Carefully handpicked produce</li>
+                <li>Fast and safe delivery</li>
+                <li>Quality you can trust</li>
+            </ul>
+        </div>
+
+        <div class="about-delivery-image">
+            <img src="{% static 'images/a1 (1).png' %}"  alt="Delivery illustration">
+        </div>
+    </div>
+</section>
+
+<section class="about-team">
+    <div class="container">
+        <h2 class="about-section-title">Our Awesome Team</h2>
+        <p class="about-section-subtitle">
+            The people who make fresh and timely delivery possible every day.
+        </p>
+
+        <div class="about-team-grid">
+            <article class="team-card">
+                 <img src="{% static 'images/z1 (1).png' %}" alt="Team member" class="team-avatar">
+                <h3 class="team-name">Arun Kumar</h3>
+                <p class="team-role">Founder & CEO</p>
+            </article>
+
+            <article class="team-card">
+                <img src="{% static 'images/z1 (2).png' %}" alt="Team member" class="team-avatar">
+                <h3 class="team-name">Priya Sharma</h3>
+                <p class="team-role">Operations Manager</p>
+            </article>
+
+            <article class="team-card">
+                 <img src="{% static 'images/z1 (3).png' %}" alt="Team member" class="team-avatar">
+                <h3 class="team-name">Rahul Verma</h3>
+                <p class="team-role">Logistics Lead</p>
+            </article>
+
+            <article class="team-card">
+                <img src="{% static 'images/z1 (4).png' %}" alt="Team member" class="team-avatar">
+                <h3 class="team-name">Sneha Iyer</h3>
+                <p class="team-role">Customer Success</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+
+<section class="about-testimonials">
+    <div class="container">
+        <h2 class="about-section-title">Client Testimonial</h2>
+
+        <div class="about-testimonial-grid">
+            <!-- card 1 -->
+            <article class="about-testimonial-card">
+                <div class="about-testimonial-quote-icon">“</div>
+                <p class="about-testimonial-text">
+                    Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
+                    Phasellus imperdiet elit eu magna dictum, bibendum cursus velit sodales.
+                    Donec sed neque eget.
+                </p>
+                <div class="about-testimonial-footer">
+                    <div class="about-testimonial-user">
+                        <img src="{% static 'images/pro1.jpg' %}"
+                             alt="Robert Fox"
+                             class="about-testimonial-avatar">
+                        <div>
+                            <h4 class="about-testimonial-name">Robert Fox</h4>
+                            <span class="about-testimonial-role">Customer</span>
+                        </div>
+                    </div>
+                    <div class="about-testimonial-stars">
+                        ★★★★★
+                    </div>
+                </div>
+            </article>
+
+            <!-- card 2 -->
+            <article class="about-testimonial-card">
+                <div class="about-testimonial-quote-icon">“</div>
+                <p class="about-testimonial-text">
+                    Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
+                    Phasellus imperdiet elit eu magna dictum, bibendum cursus velit sodales.
+                    Donec sed neque eget.
+                </p>
+                <div class="about-testimonial-footer">
+                    <div class="about-testimonial-user">
+                       <img src="{% static 'images/pro2.jpg' %}"
+                             alt="Dianne Russell"
+                             class="about-testimonial-avatar">
+                        <div>
+                            <h4 class="about-testimonial-name">Dianne Russell</h4>
+                            <span class="about-testimonial-role">Customer</span>
+                        </div>
+                    </div>
+                    <div class="about-testimonial-stars">
+                        ★★★★★
+                    </div>
+                </div>
+            </article>
+
+            <!-- card 3 -->
+            <article class="about-testimonial-card">
+                <div class="about-testimonial-quote-icon">“</div>
+                <p class="about-testimonial-text">
+                    Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
+                    Phasellus imperdiet elit eu magna dictum, bibendum cursus velit sodales.
+                    Donec sed neque eget.
+                </p>
+                <div class="about-testimonial-footer">
+                    <div class="about-testimonial-user">
+                        <img src="{% static 'images/pro3.jpg' %}"
+                             alt="Eleanor Pena"
+                             class="about-testimonial-avatar">
+                        <div>
+                            <h4 class="about-testimonial-name">Eleanor Pena</h4>
+                            <span class="about-testimonial-role">Customer</span>
+                        </div>
+                    </div>
+                    <div class="about-testimonial-stars">
+                        ★★★★★
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}

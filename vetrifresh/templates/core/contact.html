@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | VetriFresh{% endblock %}
+
+{% block content %}
+<section class="contact-hero">
+    <div class="contact-hero-bg"></div>
+</section>
+
+<section class="contact-main">
+    <div class="container contact-main-inner">
+        <!-- left info card -->
+        <div class="contact-info-card">
+            <div class="contact-info-item">
+                <span class="contact-info-icon"><i class="fa-solid fa-location-dot"></i></span>
+                <p>Surandai, Tenkasi</p>
+            </div>
+            <div class="contact-info-item">
+                <span class="contact-info-icon"><i class="fa-solid fa-envelope"></i></span>
+                <p>proxy@gmail.com<br>help.proxy@gmail.com</p>
+            </div>
+            <div class="contact-info-item">
+                <span class="contact-info-icon"><i class="fa-solid fa-phone"></i></span>
+                <p>+91 76709 28721</p>
+            </div>
+        </div>
+
+        <!-- right form card -->
+        <div class="contact-form-card">
+            <h2>Get in Touch</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="contact-form-row">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <input type="text" name="phone" placeholder="Phone Number" class="contact-input-full">
+                <textarea name="message" rows="4" placeholder="Message" class="contact-input-full" required></textarea>
+                <button type="submit" class="btn-contact-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div class="contact-map">
+    <!-- இங்க Google Maps iframe paste பண்ணு -->
+    <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15800.590515442665!2d77.53557069368374!3d8.086423115541534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b04ed3d2a087861%3A0x1e790e896aeffaa0!2sKanniyakumari%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1777722216731!5m2!1sen!2sin"
+        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+</div>
+</section>
+{% endblock %}

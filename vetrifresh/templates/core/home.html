@@ -1,0 +1,525 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}VetriFresh - Fresh & Healthy Organic Food{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-main" id="hero-carousel">
+                {% for banner in main_banners %}
+                <div class="hero-slide {% if forloop.first %}active{% endif %}"
+                    style="background-image: url('{{ banner.image.url }}'); background-size: cover; background-position: center;">
+                    <div class="hero-content" style="display:flex; flex-direction:column;">
+                        <h1>{{ banner.title }}</h1>
+                        <div class="hero-offer">
+                            <span>Sale up to</span>
+                            <span class="offer-badge">{{ banner.offer_text }}</span>
+                        </div>
+                        <p>{{ banner.subtitle }}</p>
+                        <a href="{{ banner.button_link }}" class="btn-shop">
+                            {{ banner.button_text }} <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="hero-slide active" style="background:#2d6a2d;">
+                    <div class="hero-content" style="display:flex; flex-direction:column;">
+                        <h1>Fresh & Healthy Organic Food</h1>
+                        <div class="hero-offer">
+                            <span>Sale up to</span>
+                            <span class="offer-badge">30% OFF</span>
+                        </div>
+                        <p>Free shipping on all your order.</p>
+                        <a href="/products/" class="btn-shop">Shop now <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="carousel-dots">
+                    {% for banner in main_banners %}
+                    <span class="{% if forloop.first %}active{% endif %}"
+                        onclick="goToHeroSlide({{ forloop.counter0 }})"></span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="hero-side">
+                {% for banner in side_banners %}
+                <div class="side-banner" style="background: {% if forloop.first %}#f5f0e8{% else %}#1a1a1a{% endif %};">
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
+                    <div class="side-banner-content">
+                        <small>{{ banner.subtitle }}</small>
+                        <h3>{{ banner.title }}</h3>
+                        <p>{{ banner.offer_text }}</p>
+                        <a href="{{ banner.button_link }}" class="btn-shop-sm">
+                            {{ banner.button_text }} <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="side-banner" style="background: #f5f0e8;">
+                    <div class="side-banner-content">
+                        <small>SUMMER SALE</small>
+                        <h3>75% OFF</h3>
+                        <p>Only Fruit & Vegetable</p>
+                        <a href="/products/" class="btn-shop-sm">Shop Now <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="side-banner" style="background: #1a1a1a; color: white;">
+                    <div class="side-banner-content">
+                        <small style="color:rgba(255,255,255,0.7)">BEST DEAL</small>
+                        <h3>Special Products Deal of the Month</h3>
+                        <a href="/products/" class="btn-shop-sm" style="color:white; border-color:white;">Shop Now <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES BAR -->
+<section class="features-bar">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-truck"></i></div>
+                <div class="feature-text">
+                    <h4>Free Shipping</h4>
+                    <p>Free shipping on all your order</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                <div class="feature-text">
+                    <h4>Customer Support 24/7</h4>
+                    <p>Instant access to Support</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="feature-text">
+                    <h4>100% Secure Payment</h4>
+                    <p>We ensure your money is safe</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-box"></i></div>
+                <div class="feature-text">
+                    <h4>Money-Back Guarantee</h4>
+                    <p>30 Days Money-Back Guarantee</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- POPULAR CATEGORIES -->
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Popular Categories</h2>
+            <a href="/products/" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="/products/?category={{ category.slug }}"
+                class="category-card {% if forloop.first %}active{% endif %}">
+                <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                <span>{{ category.name }}</span>
+            </a>
+            {% empty %}
+            <div class="category-card active">
+                <img src="{% static 'images/placeholder.png' %}" alt="Fresh Fruit">
+                <span>Fresh Fruit</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- DEAL BANNERS -->
+<section class="deals-section">
+    <div class="container">
+        <div class="deals-grid">
+            {% for deal in deal_banners %}
+            <div class="deal-card" style="background: {{ deal.bg_color }}; color: white;"
+                data-countdown="{{ deal.countdown_end|date:'c' }}" data-countdown-id="countdown-{{ deal.id }}">
+                {% if deal.image %}
+                <img src="{{ deal.image.url }}" alt="{{ deal.title }}">
+                {% endif %}
+                <div class="deal-content">
+                    <small>{{ deal.subtitle }}</small>
+                    <h3>{{ deal.title }}</h3>
+                    {% if deal.has_countdown and deal.countdown_end %}
+                    <div class="countdown" id="countdown-{{ deal.id }}">
+                        <div class="countdown-item"><span class="days">00</span><small>DAYS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="hours">00</span><small>HOURS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="mins">00</span><small>MINS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="secs">00</span><small>SECS</small></div>
+                    </div>
+                    {% endif %}
+                    {% if deal.price_text %}
+                    <div class="deal-price">
+                        {{ deal.price_text }}
+                        <span class="price-highlight">{{ deal.discount_text }}</span>
+                    </div>
+                    {% endif %}
+                    <a href="{{ deal.button_link }}" class="btn-deal">
+                        Shop now <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="deal-card" style="background: #1a3c1a; color: white;">
+                <div class="deal-content">
+                    <small>BEST DEALS</small>
+                    <h3>Sale of the Month</h3>
+                    <div class="countdown" id="countdown-default">
+                        <div class="countdown-item"><span class="days">00</span><small>DAYS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="hours">02</span><small>HOURS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="mins">18</span><small>MINS</small></div>
+                        <div class="countdown-sep">:</div>
+                        <div class="countdown-item"><span class="secs">46</span><small>SECS</small></div>
+                    </div>
+                    <a href="/products/" class="btn-deal">Shop now <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="deal-card" style="background: #000000; color: white;">
+                <div class="deal-content">
+                    <small>85% FAT FREE</small>
+                    <h3>Low-Fat Meat</h3>
+                    <div class="deal-price">Started at <span class="price-highlight">$79.99</span></div>
+                    <a href="/products/" class="btn-deal">Shop now <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="deal-card" style="background: #f5c000; color: #1a1a1a;">
+                <div class="deal-content">
+                    <small style="color:#1a1a1a;">SUMMER SALE</small>
+                    <h3>100% Fresh Fruit</h3>
+                    <div class="deal-price" style="color:#1a1a1a;">Up to <span class="discount-badge">64% OFF</span>
+                    </div>
+                    <a href="/products/" class="btn-deal" style="color:#1a1a1a;">Shop now <i
+                            class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE BANNERS SECTION -->
+{% if feature_banners %}
+<section class="feature-banner-section">
+    <div class="feature-banner-wrapper" id="featureBannerWrapper">
+        {% for banner in feature_banners %}
+        <div class="feature-banner-slide {% if forloop.first %}active{% endif %}"
+            data-logo-pos="{{ banner.logo_position }}">
+            <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="feature-bg-img">
+            <div class="feature-logo logo-{{ banner.logo_position }}">
+                <span class="vetri">Vetri</span><span class="fresh-text">Fresh</span>
+            </div>
+            {% if banner.title %}
+            <div class="feature-text-content logo-text-{{ banner.logo_position }}">
+                <h2>{{ banner.title }}</h2>
+                {% if banner.subtitle %}<p>{{ banner.subtitle }}</p>{% endif %}
+                <a href="{{ banner.button_link }}" class="btn-feature">
+                    {{ banner.button_text }} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- POPULAR PRODUCTS -->
+<section class="products-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Popular Products</h2>
+            <a href="/products/" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid">
+            {% for product in popular_products %}
+            <div class="product-card" onclick="window.location='/products/{{ product.slug }}/'">
+                {% if product.badge != 'none' %}
+                <span class="product-badge badge-{{ product.badge }}">
+                    {% if product.badge == 'sale' %}Sale {{ product.discount_percent }}%
+                    {% elif product.badge == 'new' %}New
+                    {% elif product.badge == 'hot' %}Hot
+                    {% endif %}
+                </span>
+                {% endif %}
+                <div class="product-img">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% if product.rating %}
+                    <div class="product-rating-badge">
+                        <i class="fas fa-star"></i> {{ product.rating }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price-row">
+                        <div>
+                            <span class="product-price">₹{{ product.price }}/{{ product.unit }}</span>
+                            {% if product.original_price %}
+                            <span class="product-original">₹{{ product.original_price }}</span>
+                            {% endif %}
+                        </div>
+                        <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart({{ product.id }})">
+                            <i class="fas fa-shopping-bag"></i>
+                        </button>
+                    </div>
+                    <div class="product-stars">
+                        {% for i in "12345" %}
+                        <i class="fas fa-star {% if forloop.counter > product.rating %}empty{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- LATEST NEWS -->
+<section class="blog-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Latest News</h2>
+        </div>
+        <div class="blog-grid">
+            {% for post in latest_blogs %}
+            <div class="blog-card">
+                <div class="blog-img">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    <div class="blog-date">
+                        <span>{{ post.published_at|date:"d" }}</span>
+                        <small>{{ post.published_at|date:"M" }}</small>
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span><i class="fas fa-tag"></i>{{ post.category }}</span>
+                        <span><i class="fas fa-user"></i>By {{ post.author }}</span>
+                        <span><i class="fas fa-comment"></i>{{ post.comments_count }} Comments</span>
+                    </div>
+                    <div class="blog-title">{{ post.title }}</div>
+                    <a href="/blog/{{ post.slug }}/" class="blog-readmore">
+                        Read More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section class="instagram-section">
+    <div class="container">
+        <h2>Follow us on Instagram</h2>
+        <div class="instagram-grid">
+            {% for photo in instagram_photos %}
+            <div class="instagram-item">
+                <img src="{{ photo.image.url }}" alt="Instagram">
+                <div class="instagram-overlay">
+                    <i class="fab fa-instagram"></i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="testimonials-header">
+            <h2>Client Testimonials</h2>
+            <div class="slider-arrows">
+                <button onclick="prevTestimonial()"><i class="fas fa-arrow-left"></i></button>
+                <button class="active" onclick="nextTestimonial()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="testimonials-grid" id="testimonials-container">
+            {% for t in testimonials %}
+            <div class="testimonial-card">
+                <div class="quote-icon">"</div>
+                <p class="testimonial-text">"{{ t.review }}"</p>
+                <div class="testimonial-author">
+                    <div class="author-info">
+                        {% if t.photo %}
+                        <img src="{{ t.photo.url }}" alt="{{ t.name }}">
+                        {% else %}
+                        <div style="width:45px;height:45px;border-radius:50%;background:var(--green-light);
+                                    display:flex;align-items:center;justify-content:center;
+                                    color:white;font-weight:700;">
+                            {{ t.name|first }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h5>{{ t.name }}</h5>
+                            <span>{{ t.role }}</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        {% for i in "12345" %}
+                        <i class="fas fa-star"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="slider-dots">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ===== HERO CAROUSEL =====
+(function () {
+    var heroCurrentSlide = 0;
+    var heroSlides = document.querySelectorAll('.hero-slide');
+    var heroDots = document.querySelectorAll('.carousel-dots span');
+
+    window.goToHeroSlide = function (index) {
+        heroSlides.forEach(function (s) { s.classList.remove('active'); });
+        heroDots.forEach(function (d) { d.classList.remove('active'); });
+        if (heroSlides[index]) heroSlides[index].classList.add('active');
+        if (heroDots[index]) heroDots[index].classList.add('active');
+        heroCurrentSlide = index;
+    }
+
+    function nextHeroSlide() {
+        var next = (heroCurrentSlide + 1) % heroSlides.length;
+        window.goToHeroSlide(next);
+    }
+
+    if (heroSlides.length > 0) {
+        setInterval(nextHeroSlide, 3000);
+    }
+})();
+
+// ===== ALL DOM READY CODE =====
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ===== COUNTDOWN TIMER =====
+    var dealCards = document.querySelectorAll('[data-countdown]');
+    dealCards.forEach(function (card) {
+        var endTime = card.getAttribute('data-countdown');
+        var targetId = card.getAttribute('data-countdown-id');
+        if (endTime && targetId) {
+            function update() {
+                var now = new Date().getTime();
+                var end = new Date(endTime).getTime();
+                var diff = end - now;
+                if (diff <= 0) return;
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var secs = Math.floor((diff % (1000 * 60)) / 1000);
+                var el = document.getElementById(targetId);
+                if (el) {
+                    el.querySelector('.days').textContent = String(days).padStart(2, '0');
+                    el.querySelector('.hours').textContent = String(hours).padStart(2, '0');
+                    el.querySelector('.mins').textContent = String(mins).padStart(2, '0');
+                    el.querySelector('.secs').textContent = String(secs).padStart(2, '0');
+                }
+            }
+            update();
+            setInterval(update, 1000);
+        }
+    });
+
+    // ===== FEATURE BANNER SLIDER =====
+    var featCurrent = 0;
+    var featSlides = document.querySelectorAll('.feature-banner-slide');
+    if (featSlides.length > 1) {
+        setInterval(function () {
+            featSlides[featCurrent].classList.remove('active');
+            featCurrent = (featCurrent + 1) % featSlides.length;
+            featSlides[featCurrent].classList.add('active');
+        }, 2000);
+    }
+
+    // ===== DEAL BANNER ANIMATIONS =====
+    var dealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.deal-card').forEach(function (card) {
+        dealObserver.observe(card);
+    });
+
+   // ===== BLOG ANIMATION =====
+var blogObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, { threshold: 0.05 });
+
+document.querySelectorAll('.blog-card').forEach(function (card) {
+    blogObserver.observe(card);
+});
+    // ===== INSTAGRAM ANIMATION =====
+    var instaObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.instagram-item').forEach(function (item) {
+        instaObserver.observe(item);
+    });
+
+    // ===== TESTIMONIAL ANIMATION =====
+    var testimonialObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.testimonial-card').forEach(function (card) {
+        testimonialObserver.observe(card);
+    });
+
+});
+
+// ===== TESTIMONIAL SLIDER =====
+function prevTestimonial() { }
+function nextTestimonial() { }
+</script>
+{% endblock %}

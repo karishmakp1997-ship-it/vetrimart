@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - VetriFresh{% endblock %}
+
+{% block content %}
+<section class="checkout-page">
+  <div class="container">
+    <div class="checkout-grid">
+
+      <div class="checkout-left">
+        <h2 class="checkout-title">Billing Information</h2>
+
+        <form id="billingForm" class="billing-form">
+          {% csrf_token %}
+
+          <div class="form-row three-col">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" name="first_name" placeholder="Your first name" required>
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" name="last_name" placeholder="Your last name" required>
+            </div>
+            <div class="form-group">
+              <label>Company Name (optional)</label>
+              <input type="text" name="company_name" placeholder="Company name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Street Address</label>
+            <input type="text" name="street_address" placeholder="Address" required>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>Country / Region</label>
+              <select name="country" required>
+                <option value="">Select</option>
+                <option value="India">India</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>States</label>
+              <select name="state" required>
+                <option value="">Selects</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Karnataka">Karnataka</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="text" name="phone" placeholder="Phone number" required>
+            </div>
+          </div>
+
+          <label class="ship-check">
+            <input type="checkbox" name="ship_other">
+            <span>Ship to a different address</span>
+          </label>
+
+          <div class="additional-info">
+            <h3>Additional Info</h3>
+            <div class="form-group">
+              <label>Order Notes (Optional)</label>
+              <textarea name="notes" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="checkout-right">
+        <div class="summary-card">
+          <h3>Order Summary</h3>
+
+          {% for item in items %}
+          <div class="summary-item">
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            <div class="summary-item-info">
+              <span>{{ item.product.name }} x{{ item.quantity }}</span>
+            </div>
+            <strong>₹{{ item.subtotal }}</strong>
+          </div>
+          {% empty %}
+          <p class="empty-cart-msg">No items in cart.</p>
+          {% endfor %}
+
+          <div class="summary-line">
+            <span>Subtotal:</span>
+            <strong>₹{{ subtotal }}</strong>
+          </div>
+
+          <div class="summary-line">
+            <span>Shipping:</span>
+            <strong>Free</strong>
+          </div>
+
+          <div class="summary-line total-line">
+            <span>Total:</span>
+            <strong>₹{{ total }}</strong>
+          </div>
+
+          <h4 class="payment-heading">Payment Method</h4>
+
+          <div class="payment-methods">
+            <label><input type="radio" name="payment" checked> Cash on Delivery</label>
+            <label><input type="radio" name="payment"> Paypal</label>
+            <label><input type="radio" name="payment"> Amazon Pay</label>
+          </div>
+
+          <button type="button" class="place-order-btn" onclick="openPaymentModal()">Place Order</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="related-section">
+      <h2>Related Products</h2>
+      <div class="related-grid">
+        {% for rp in related_products %}
+        <div class="shop-product-card">
+          <div class="shop-product-img">
+            <a href="/products/{{ rp.slug }}/">
+              <img src="{{ rp.image.url }}" alt="{{ rp.name }}">
+            </a>
+          </div>
+          <div class="shop-product-info">
+            <a href="/products/{{ rp.slug }}/" class="shop-product-name">{{ rp.name }}</a>
+            <div class="product-price-row">
+              <div>
+                <span class="product-price">₹{{ rp.price }}/{{ rp.unit }}</span>
+                {% if rp.original_price %}
+                <span class="product-original">₹{{ rp.original_price }}</span>
+                {% endif %}
+              </div>
+              <button class="btn-add-cart" onclick="window.location='{% url 'add_to_cart' rp.id %}'">
+                <i class="fas fa-shopping-bag"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="checkout-banner">
+      <div class="banner-content">
+        <span>BEST DEALS</span>
+        <h3>Sale of the Month</h3>
+        <p>Fresh vegetables and fruits with special offers this week.</p>
+      </div>
+      <img src="{% static 'images/ban.png' %}" alt="Sale banner">
+    </div>
+  </div>
+</section>
+
+<div class="payment-modal-overlay" id="paymentOverlay"></div>
+
+<div class="payment-modal" id="paymentModal">
+  <button class="modal-close-btn" onclick="closePaymentModal()">&times;</button>
+
+  <div class="payment-step payment-step-form active" id="paymentStepForm">
+    <div class="payment-top-row">
+      <div class="payment-method-icons">
+        <span>Payment Methods</span>
+      </div>
+    </div>
+
+    <div class="payment-modal-grid">
+      <div class="modal-left">
+        <h3>Card Details</h3>
+        <div class="form-group">
+          <label>Name on card</label>
+          <input type="text" id="cardName" placeholder="Meet Patel">
+        </div>
+        <div class="form-group">
+          <label>Card number</label>
+          <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+        </div>
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label>Card expiration</label>
+            <select id="expMonth">
+              <option>Month</option>
+              <option>01</option>
+              <option>02</option>
+              <option>03</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <select id="expYear">
+              <option>Year</option>
+              <option>2026</option>
+              <option>2027</option>
+              <option>2028</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Card Security Code</label>
+          <input type="text" id="cvv" placeholder="Code">
+        </div>
+      </div>
+
+      <div class="modal-right">
+        <h3>Billing address</h3>
+        <div class="form-group">
+          <label>Country</label>
+          <select id="billingCountry">
+            <option>Country</option>
+            <option>India</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" id="billingAddress" placeholder="Address">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="billingCity" placeholder="City">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="billingState" placeholder="State">
+        </div>
+        <div class="form-group">
+          <label>ZIP CODE</label>
+          <input type="text" id="billingZip" placeholder="ZIP CODE">
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="payEmail" placeholder="Email">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="payPhone" placeholder="Phone">
+      </div>
+    </div>
+
+    <button class="pay-btn" onclick="handlePayment()">Pay</button>
+  </div>
+
+  <div class="payment-step payment-step-success" id="paymentStepSuccess">
+    <div class="success-checkmark-wrap">
+      <div class="success-circle">
+        <svg viewBox="0 0 52 52" class="success-checkmark-svg">
+          <circle class="success-circle-path" cx="26" cy="26" r="25" fill="none"/>
+          <path class="success-check-path" fill="none" d="M14 27 l7 7 l17 -17"/>
+        </svg>
+      </div>
+    </div>
+    <h2>Payment Successful</h2>
+    <p>Your payment has been processed successfully.</p>
+  </div>
+
+  <div class="payment-step payment-step-delivery" id="paymentStepDelivery">
+    <div class="delivery-success-icon">✔</div>
+    <h2>We will knock your door steps shortly</h2>
+    <div class="scooter-wrap">
+      <img src="{% static 'images/scooty.png' %}" alt="Delivery Boy" class="delivery-boy-img">
+    </div>
+    <div class="brand-text">VetriFresh</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openPaymentModal() {
+  const billingForm = document.getElementById('billingForm');
+  if (!billingForm.checkValidity()) {
+    billingForm.reportValidity();
+    return;
+  }
+
+  document.getElementById('paymentOverlay').classList.add('active');
+  document.getElementById('paymentModal').classList.add('active');
+  document.getElementById('paymentStepForm').classList.add('active');
+  document.getElementById('paymentStepSuccess').classList.remove('active');
+  document.getElementById('paymentStepDelivery').classList.remove('active');
+}
+
+function closePaymentModal() {
+  document.getElementById('paymentOverlay').classList.remove('active');
+  document.getElementById('paymentModal').classList.remove('active');
+}
+
+function handlePayment() {
+  document.getElementById('paymentStepForm').classList.remove('active');
+  document.getElementById('paymentStepSuccess').classList.add('active');
+
+  setTimeout(function() {
+    document.getElementById('paymentStepSuccess').classList.remove('active');
+    document.getElementById('paymentStepDelivery').classList.add('active');
+  }, 2200);
+}
+
+document.getElementById('paymentOverlay').addEventListener('click', closePaymentModal);
+</script>
+{% endblock %}
